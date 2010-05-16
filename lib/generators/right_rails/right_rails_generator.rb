@@ -1,44 +1,29 @@
 #
 # Copies all the javascripts in place and updates them if necessary
 #
-
-class RightRailsGenerator < Rails::Generator::Base
+require 'rails/generators'
+class RightRailsGenerator < Rails::Generators::Base
   
-  mandatory_options :source => "#{File.dirname(__FILE__)}/../../javascripts"
-    
+  #  mandatory_options :source => "#{File.dirname(__FILE__)}/../../javascripts"
+  
   def manifest
-    record do |m|
-      # creating the javascript directories
-      m.directory 'public/javascripts/right'
-      m.directory 'public/javascripts/right/i18n'
-      
-      # copying the javascript files
-      Dir.open(options[:source]).each do |file|
-        unless ['.', '..'].include?(file)
-          destination = if ['right.js', 'right-src.js', 'right-olds.js', 'right-olds-src.js'].include?(file)
-            file
-          elsif file.include?('ui-i18n')
-            file.gsub('right-', 'right/').gsub('ui-i18n-', 'i18n/')
-          else
-            file.gsub('right-', 'right/')
-          end
-          
-          m.file file, "public/javascripts/#{destination}", :chmod => 0644
-        end
-      end
-      
-      # creating the iframed uploads layout
-      m.directory "app/views/layouts"
-      m.file "/../generators/right_rails/templates/iframed.html.erb", "app/views/layouts/iframed.html.erb"
-      
-      # copying the images in place
-      m.directory "public/images/rightjs-ui"
-      Dir.open("#{File.dirname(__FILE__)}/../../images").each do |filename|
-        unless ['.', '..'].include?(filename)
-          m.file "/../images/#{filename}", "public/images/rightjs-ui/#{filename}"
-        end
-      end
+    
+    source_path      = File.dirname(__FILE__)
+    images_path      = "#{source_path}/../../../images/"
+    javascripts_path = "#{source_path}/../../../javascripts/"    
+
+    # creating the javascript directories
+
+    directory javascripts_path + "/right","public/javascripts/right/"
+    ['right.js', 'right-src.js', 'right-olds.js', 'right-olds-src.js'].each do |file|
+      copy_file(javascripts_path + file,"public/javascripts/" + file)
     end
+
+    # creating the iframed uploads layout
+    copy_file source_path + "/templates/iframed.html.erb", "app/views/layouts/iframed.html.erb"
+    
+    # copying the images in place
+    directory images_path,"public/images/rightjs-ui"
   end
   
   

@@ -8,6 +8,7 @@ require 'right_rails/helpers/basic'
 require 'right_rails/helpers/forms'
 require 'right_rails/helpers/misc'
 require 'right_rails/helpers/rails'
+require 'generators/right_rails/right_rails_generator'
 
 if defined?(Rails)
   if Rails::VERSION::MAJOR == 2
